@@ -1,0 +1,101 @@
+{
+   "variables": {
+        "puppet_rpm": "puppet-agent-1.7.1-1.el6.x86_64.rpm",
+        "ssh_username": "root",
+        "ssh_pass": "vagrant",
+        "iso_url_prefix": "iso",
+        "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
+        "vm_version": "1.0",
+        "vm_description": "Built with Packer VirtualBox-Iso"
+    },
+   "provisioners": [
+   {
+      "type": "shell",
+      "environment_vars": [ "PUPPET_RPM={{user `puppet_rpm`}}"
+                          ],
+      "execute_command": "echo '{{user `ssh_pass`}}' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "override": {
+      "virtualbox-iso": {
+        "scripts": [
+          "scripts/centos/base/base.sh",
+          "scripts/centos/base/sshd.sh",
+          "scripts/centos/base/fix-slow-dns.sh"
+         ]
+       }
+       }
+   },
+   {
+        "type": "file",
+        "source": "files/10-growpart.cfg",
+        "destination": "/tmp/10-growpart.cfg"
+   },
+   {
+        "type": "shell",
+        "execute_command": "sudo -S sh '{{.Path}}'",
+        "inline": [
+                  "yum -y install cloud-init cloud-utils cloud-utils-growpart",
+                  "mv /tmp/10-growpart.cfg /etc/cloud/cloud.cfg.d/10-growpart.cfg",
+                  "chown root:root /etc/cloud/cloud.cfg.d/10-growpart.cfg",
+                  "systemctl enable cloud-config.service",
+                  "systemctl enable cloud-final.service",
+                  "systemctl enable cloud-init-local.service",
+                  "systemctl enable cloud-init.service",
+                  "echo \"{{user `ssh_username`}}:$(openssl rand -base64 32)\" | chpasswd",
+                  "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
+                  "shred -u /root/.*history  /home/centos/.*history",
+                  "dd if=/dev/zero of=/zeros bs=1M",
+                  "rm -f /zeros"
+        ]
+   }
+   ],
+  "builders": [
+  {
+    "type": "virtualbox-iso",
+    "vm_name": "centos73-virtualbox",
+    "headless": true,
+    "guest_os_type": "RedHat_64",
+    "iso_url": "{{user `iso_url_prefix`}}/CentOS-7-x86_64-Minimal-1708.iso",
+    "iso_checksum": "5848f2fd31c7acf3811ad88eaca6f4aa",
+    "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+    "iso_checksum_type": "md5",
+    "ssh_username": "{{user `ssh_username`}}",
+    "ssh_password": "{{user `ssh_pass`}}",
+    "ssh_wait_timeout": "90m",
+    "http_directory" : "http",
+    "output_directory": "packer-centos73-x86_64-virtualbox",
+    "ssh_port": 22,
+    "export_opts": [
+                      "--manifest",
+                      "--vsys", "0",
+                      "--description", "{{user `vm_description`}}",
+                    "--version", "{{user `vm_version`}}"
+                    ],
+    "format": "ova",
+    "virtualbox_version_file": ".vbox_version",
+    "boot_command": [
+    "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos/7/ami/ks.cfg<enter><wait>"
+    ],
+    "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
+    "vboxmanage": [
+    ["modifyvm","{{.Name}}","--memory","2048"],
+    ["modifyvm","{{.Name}}","--cpus", "2"],
+    ["modifyvm","{{.Name}}","--vrdeaddress", "0.0.0.0" ]
+    ]
+    }],
+    "post-processors" : [
+     [
+     {
+       "type": "amazon-import",
+       "access_key": "",
+       "secret_key": "",
+       "region": "",
+       "s3_bucket_name": "{{user `aws_s3_bucket_name`}}",
+       "keep_input_artifact": true,
+       "license_type": "BYOL",
+       "tags": {
+       "Description": "packer amazon-import {{timestamp}}"
+       }
+     }
+     ]
+     ]
+}
