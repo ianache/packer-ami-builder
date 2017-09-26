@@ -1,0 +1,82 @@
+{
+    "variables": {
+      "vagrant_user": "vagrant",
+      "vagrant_password": "vagrant",
+      "iso_checksum_type": "sha1",
+      "iso_url": "iso/en_windows_server_2016_x64_dvd_9718492.iso",
+      "iso_checksum": "f185197af68fae4f0e06510a4579fc511ba27616",
+      "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
+      "vm_version": "1.0",
+      "vm_description": "Built with Packer VirtualBox-Iso"
+    },
+    "builders": [ {
+      "type": "virtualbox-iso",
+      "communicator": "winrm",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": false,
+      "boot_wait": "7m",
+      "winrm_username": "{{user `vagrant_user`}}",
+      "winrm_password": "{{user `vagrant_password`}}",
+      "winrm_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "shutdown_timeout": "1h",
+      "guest_os_type": "Windows2012_64",
+      "guest_additions_mode": "disable",
+      "output_directory": "packer-win2016gui-virtualbox",
+      "disk_size": 61440,
+      "format": "ova",
+      "floppy_files": [
+                "http/win/2016/Autounattend.xml",
+                "scripts/win/disable-winrm.ps1",
+                "scripts/win/enable-winrm.ps1",
+                "scripts/win/microsoft-updates.bat",
+                "scripts/win/win-updates.ps1"
+            ],
+      "vboxmanage": [
+                      ["modifyvm", "{{.Name}}", "--natpf1", "guest_winrm,tcp,,55985,,5985"  ],
+                      ["modifyvm", "{{.Name}}", "--vram", "36" ],
+                      ["modifyvm", "{{.Name}}", "--memory", "2048"],
+                      ["modifyvm", "{{.Name}}", "--cpus", "2"],
+                      ["modifyvm","{{.Name}}","--vrdeaddress", "0.0.0.0" ],
+                      ["modifyvm", "{{.Name}}", "--hardwareuuid", "02f110e7-369a-4bbc-bbe6-6f0b6864ccb6"  ]
+                    ]
+        }
+    ],
+    "provisioners": [
+    {
+      "type": "windows-shell",
+      "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
+      "scripts": [
+        "scripts/win/enable-rdp.bat"
+      ]
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "windows-shell",
+      "scripts": [
+        "scripts/win/uac-enable.bat",
+        "scripts/win/compile-dotnet-assemblies.bat"
+      ]
+    }
+  ],
+  "post-processors" : [
+     [
+     {
+       "type": "amazon-import",
+       "access_key": "",
+       "secret_key": "",
+       "region": "",
+       "s3_bucket_name": "{{user `aws_s3_bucket_name`}}",
+       "keep_input_artifact": true,
+       "license_type": "BYOL",
+       "tags": {
+       "Description": "packer amazon-import {{timestamp}}"
+       }
+     }
+     ]
+  ]
+}
