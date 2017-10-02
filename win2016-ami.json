@@ -3,6 +3,10 @@
       "vagrant_user": "vagrant",
       "vagrant_password": "vagrant",
       "iso_checksum_type": "sha1",
+      "puppet_release": "enterprise",
+      "pe_version": "2016.4.8",
+      "pe_arch": "x64",
+      "pe_agent_version": "1.10.8",
       "iso_url": "iso/en_windows_server_2016_x64_dvd_9718492.iso",
       "iso_checksum": "f185197af68fae4f0e06510a4579fc511ba27616",
       "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
@@ -15,7 +19,7 @@
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
-      "headless": false,
+      "headless": true,
       "boot_wait": "7m",
       "winrm_username": "{{user `vagrant_user`}}",
       "winrm_password": "{{user `vagrant_password`}}",
@@ -47,23 +51,35 @@
     "provisioners": [
     {
       "type": "windows-shell",
+      "environment_vars": [ "PUPPET_RELEASE={{user `puppet_release`}}",
+                             "PE_VERSION={{user `pe_version`}}",
+                             "PE_AGENT_VERSION={{user `pe_agent_version`}}",
+                             "PE_ARCH={{user `pe_arch`}}"
+                           ],
       "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
       "scripts": [
-        "scripts/win/enable-rdp.bat"
+        "scripts/win/puppet.bat"
       ]
     },
     {
       "type": "windows-restart"
     },
     {
+      "type": "puppet-masterless",
+      "manifest_file": "puppet/manifests/site.pp",
+      "module_paths": ["puppet/modules"],
+      "guest_os_type": "windows"
+    },
+    {
       "type": "windows-shell",
       "scripts": [
         "scripts/win/uac-enable.bat",
+        "scripts/win/enable-rdp.bat",
         "scripts/win/compile-dotnet-assemblies.bat"
       ]
     }
   ],
-  "post-processors" : [
+   "post-processors" : [
      [
      {
        "type": "amazon-import",
@@ -74,7 +90,7 @@
        "keep_input_artifact": true,
        "license_type": "BYOL",
        "tags": {
-       "Description": "packer amazon-import {{timestamp}}"
+         "Description": "packer amazon-import {{timestamp}}"
        }
      }
      ]

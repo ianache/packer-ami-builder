@@ -1,0 +1,9 @@
+---
+:backends:
+  - yaml
+:hierarchy:
+  - "common"
+:yaml:
+  :datadir: 'C:\Windows\Temp\packer-puppet-masterless\data'
+:logger: console
+

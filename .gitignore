@@ -1,5 +1,8 @@
 iso/
+*.box
+.vagrant/
 iso
+puppet/modules
 packer-centos73-x86_64-virtualbox/
 packer-win2016gui-virtualbox/
 packer_cache/
