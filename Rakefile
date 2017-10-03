@@ -22,7 +22,6 @@ end
 
 desc "Custom: Download third-party modules"
 task :r10k do
-  puts "\033[1;33mChecking Dependency Modules#\033[0m"
   system 'r10k puppetfile check'
   system 'r10k puppetfile purge'
   system 'r10k puppetfile install -v'
