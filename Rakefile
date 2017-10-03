@@ -15,11 +15,6 @@ task :check do
     end
 end
 
-desc "Custom: Prepare symbolic link to root puppet module folders"
-  task :symlink do
-  system 'ln -s "/packer_home/iso" "iso"' if not Dir.exist?('iso')
-end
-
 desc "Custom: Download third-party modules"
 task :r10k do
   system 'r10k puppetfile check'
@@ -27,4 +22,4 @@ task :r10k do
   system 'r10k puppetfile install -v'
 end
 
-task :default => [:r10k, :symlink, :check]
+task :default => [:r10k, :check]
