@@ -10,6 +10,7 @@
       "iso_url": "iso/en_windows_server_2016_x64_dvd_9718492.iso",
       "iso_checksum": "f185197af68fae4f0e06510a4579fc511ba27616",
       "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
+      "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}",
       "vm_version": "1.0",
       "vm_description": "Built with Packer VirtualBox-Iso"
     },
@@ -60,6 +61,12 @@
       "scripts": [
         "scripts/win/puppet.bat"
       ]
+    },
+    {
+      "type": "windows-shell",
+      "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}"
+                           ],
+      "script": "scripts/win/chocolatey.bat"
     },
     {
       "type": "windows-restart"
