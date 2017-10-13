@@ -2,6 +2,7 @@ iso/
 *.box
 .vagrant/
 iso
+log/
 http/win/**/Autounattend.xml
 puppet/modules
 packer-centos73-x86_64-virtualbox/

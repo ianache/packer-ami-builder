@@ -1,0 +1,14 @@
+{
+    "2016": {
+      "windows_key": "<Use your Windows Key>",
+      "windows_fullname": "Windows 2016 AWS",
+      "windows_computername": "aws-win2016",
+      "windows_organization": "AWS",
+      "windows_local_user_name": "aws_user",
+      "windows_local_user_password": "vagrant",
+      "windows_local_user_description": "description of the aws_user",
+      "windows_local_user_displayname": "aws_user",
+      "windows_administrator_password": "Hu17%4##90@"
+    }
+
+}

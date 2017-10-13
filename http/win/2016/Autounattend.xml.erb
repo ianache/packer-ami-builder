@@ -41,7 +41,7 @@
                         </ModifyPartition>
                         <ModifyPartition wcm:action="add">
                             <Format>NTFS</Format>
-                            <Label>nano</Label>
+                            <Label>Data</Label>
                             <Letter>E</Letter>
                             <Order>2</Order>
                             <PartitionID>2</PartitionID>
@@ -77,12 +77,12 @@
                 <ProductKey>
                     <!-- Do not uncomment the Key element if you are using trial ISOs -->
                     <!-- You must uncomment the Key element (and optionally insert your own key) if you are using retail or volume license ISOs -->
-                    <Key><%= @windows_key %></Key>
+                    <Key><%= windows_key %></Key>
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>
-                <FullName>Vagrant</FullName>
-                <Organization>AWS</Organization>
+                <FullName><%= windows_fullname %></FullName>
+                <Organization><%= windows_organization %></Organization>
             </UserData>
         </component>
     </settings>
@@ -91,7 +91,7 @@
             <OEMInformation>
                 <HelpCustomized>false</HelpCustomized>
             </OEMInformation>
-            <ComputerName>vagrant-2016</ComputerName>
+            <ComputerName><%= windows_computername %></ComputerName>
             <TimeZone>Pacific Standard Time</TimeZone>
             <RegisteredOwner/>
         </component>
@@ -113,11 +113,11 @@
         <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
             <AutoLogon>
                 <Password>
-                    <Value>vagrant</Value>
+                    <Value><%= windows_local_user_password %></Value>
                     <PlainText>true</PlainText>
                 </Password>
                 <Enabled>true</Enabled>
-                <Username>vagrant</Username>
+                <Username><%= windows_local_user_name  %></Username>
             </AutoLogon>
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
@@ -207,19 +207,19 @@
             </OOBE>
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value>vagrant</Value>
+                    <Value><%= windows_administrator_password %></Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
                 <LocalAccounts>
                     <LocalAccount wcm:action="add">
                         <Password>
-                            <Value>vagrant</Value>
+                            <Value><%= windows_local_user_password %></Value>
                             <PlainText>true</PlainText>
                         </Password>
                         <Group>administrators</Group>
-                        <DisplayName>Vagrant</DisplayName>
-                        <Name>vagrant</Name>
-                        <Description>Vagrant User</Description>
+                        <DisplayName><%= windows_local_user_displayname %></DisplayName>
+                        <Name><%= windows_local_user_name %></Name>
+                        <Description><%= windows_local_user_description %></Description>
                     </LocalAccount>
                 </LocalAccounts>
             </UserAccounts>

@@ -1,9 +1,15 @@
 require 'yaml'
 require 'erb'
+require 'json'
+require 'ostruct'
+
+def erb(template, vars)
+  ERB.new(template).result(OpenStruct.new(vars).instance_eval { binding })
+end
 
 desc "Custom: Validate manifests, (erb/epp)templates, and ruby files"
 task :check do
-    Dir['*.json'].each do |template|
+    Dir['packer-*.json'].each do |template|
           sh "packer validate #{template}"
             end
 
@@ -25,13 +31,11 @@ end
 
 desc "Parse ERB templates"
 task :parse do
-  ##loops through all .erb and use the specific ENV variable Windows Key for that specific o
-  Dir['http/win/**/*.xml.erb'].each do |template|
+ Dir['http/win/**/*.xml.erb'].each do |template|
     os_version = template.split('/')[2]
-    @windows_key = ENV["PACKER_WINDOWS_KEY_#{os_version}"]
-    renderer = ERB.new File.read(template), nil, "%"
+    var_hash = JSON.parse(File.read("autounattend/#{os_version}/autounattend.json"))
     File.open("http/win/#{os_version}/Autounattend.xml", "w+") do |f|
-      f.write(renderer.result(binding))
+      f.write(erb(File.read(template), var_hash[os_version]))
     end
   end
 end
