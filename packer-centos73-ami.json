@@ -83,19 +83,23 @@
     ]
     }],
     "post-processors" : [
-     [
+     {
+       "type": "vagrant",
+       "keep_input_artifact": true,
+       "output": "centos_73_{{.Provider}}.box"
+     },
      {
        "type": "amazon-import",
        "access_key": "",
        "secret_key": "",
        "region": "",
        "s3_bucket_name": "{{user `aws_s3_bucket_name`}}",
-       "keep_input_artifact": true,
+       "keep_input_artifact": false,
        "license_type": "BYOL",
-       "tags": {
-       "Description": "packer amazon-import {{timestamp}}"
-       }
+       "tags": 
+        {
+          "Description": "packer amazon-import {{timestamp}}"
+        }
      }
-     ]
      ]
 }
