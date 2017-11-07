@@ -63,13 +63,13 @@
       ]
     },
     {
-      "type": "windows-shell",
-      "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}"
-                           ],
-      "script": "scripts/win/chocolatey.bat"
-    },
-    {
-      "type": "windows-restart"
+      "type": "powershell",
+      "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
+                            "VAGRANT_USER={{user `vagrant_user`}}"
+                          ],
+      "scripts": [ "scripts/win/chocolatey.ps1",
+                   "scripts/win/openssh.ps1"
+                 ]
     },
     {
       "type": "puppet-masterless",
@@ -79,7 +79,11 @@
     },
     {
       "type": "windows-shell",
+      "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
+                            "VAGRANT_USER={{user `vagrant_user`}}"
+                          ],
       "scripts": [
+        "scripts/win/vagrant-ssh.bat",
         "scripts/win/uac-enable.bat",
         "scripts/win/enable-rdp.bat",
         "scripts/win/compile-dotnet-assemblies.bat"

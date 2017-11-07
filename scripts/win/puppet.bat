@@ -1,6 +1,8 @@
 
 if "%PUPPET_RELEASE%" equ "open" goto :opensource
 if "%PUPPET_RELEASE%" equ "enterprise" goto :enterprise
+if "%PUPPET_RELEASE%" equ "none" goto :none
+
 goto :done
 
 :opensource
@@ -25,7 +27,11 @@ msiexec /qn /i C:\Windows\Temp\puppet.msi PUPPET_AGENT_STARTUP_MODE=disabled PUP
 
 <nul set /p ".=;C:\Program Files (x86)\Puppet Labs\Puppet\bin" >> C:\Windows\Temp\PATH
 set /p PATH=<C:\Windows\Temp\PATH
-::C:\Windows\System32\setx.exe PATH "%PATH%" /m => THIS IS CAUSING ISSUES
+
+:none
+
+echo "skipping puppet installation..."
+
 
 :done
 
