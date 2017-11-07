@@ -11,6 +11,8 @@ Builds an AMI from ISO Media.
 
 ## How does it work
 
+* update your windows variables inside the `autounattend` directory.
+* Run `rake` to parse variables inside the `autounattend` directory.
 * Validate a Packer template `packer validate <template_name>.json`.
 * Run a Packer build `packer build <template_name>.json`.
 
