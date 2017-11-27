@@ -1,4 +1,4 @@
-## Packer AMI Builder
+## Packer AMI/ESXI Builders
 
 Builds an AMI from ISO Media.
 
@@ -15,8 +15,10 @@ Builds an AMI from ISO Media.
 * Run `rake` to parse variables inside the `autounattend` directory.
 * Validate a Packer template `packer validate <template_name>.json`.
 * Run a Packer build `packer build <template_name>.json`.
+* Run a Packer build with variables `packer -var-file myvariables.json <template_name>.json`
 
 ## References
 
 * Packer Amazon Import Post-Processor - https://www.packer.io/docs/post-processors/amazon-import.html
 * Amazon Import Process - http://docs.aws.amazon.com/vm-import/latest/userguide/vmimport-image-import.html
+* Packer VMware ESXI - https://www.packer.io/docs/builders/vmware-iso.html
