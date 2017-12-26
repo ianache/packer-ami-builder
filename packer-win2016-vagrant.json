@@ -9,7 +9,6 @@
       "pe_agent_version": "1.10.8",
       "iso_url": "iso/en_windows_server_2016_x64_dvd_9718492.iso",
       "iso_checksum": "f185197af68fae4f0e06510a4579fc511ba27616",
-      "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
       "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}",
       "vm_version": "1.0",
       "vm_description": "Built with Packer VirtualBox-Iso"
@@ -59,8 +58,8 @@
                            ],
       "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
       "scripts": [
-        "scripts/win/puppet.bat"
-
+        "scripts/win/puppet.bat",
+        "scripts/win/vm-guest-tools.bat"
       ]
     },
     {
@@ -68,8 +67,10 @@
       "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
                             "VAGRANT_USER={{user `vagrant_user`}}"
                           ],
-      "scripts": [ "scripts/win/chocolatey.ps1"
-                 ]
+      "scripts": [ "scripts/win/chocolatey.ps1",
+                   "scripts/win/bitvise.ps1"
+                 ],
+     "valid_exit_codes": [0,16]
     },
     {
       "type": "puppet-masterless",
@@ -79,7 +80,7 @@
     },
     {
       "type": "windows-shell",
-      "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
+      "environment_vars": [
                             "VAGRANT_USER={{user `vagrant_user`}}"
                           ],
       "scripts": [
@@ -92,22 +93,8 @@
    "post-processors" : [
      {
        "type": "vagrant",
-       "keep_input_artifact": true,
-       "output": "windows_2016_{{.Provider}}.box"
-     },
-     {
-       "type": "amazon-import",
-       "only": ["virtualbox-iso"],
-       "access_key": "",
-       "secret_key": "",
-       "region": "",
-       "s3_bucket_name": "{{user `aws_s3_bucket_name`}}",
        "keep_input_artifact": false,
-       "license_type": "BYOL",
-       "tags": 
-        {
-         "Description": "packer amazon-import {{timestamp}}"
-        }
-      }
+       "output": "windows_2016_{{.Provider}}.box"
+     }
     ]
 }
