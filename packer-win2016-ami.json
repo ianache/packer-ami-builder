@@ -1,53 +1,43 @@
 {
     "variables": {
-      "vagrant_user": "vagrant",
-      "vagrant_password": "vagrant",
-      "iso_checksum_type": "sha1",
+      "admin_user": "Administrator",
+      "admin_password": "vagrant",
       "puppet_release": "enterprise",
       "pe_version": "2016.4.8",
       "pe_arch": "x64",
       "pe_agent_version": "1.10.8",
-      "iso_url": "iso/en_windows_server_2016_x64_dvd_9718492.iso",
-      "iso_checksum": "f185197af68fae4f0e06510a4579fc511ba27616",
-      "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
-      "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}",
-      "vm_version": "1.0",
-      "vm_description": "Built with Packer VirtualBox-Iso"
+      "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}"
     },
     "builders": [ {
-      "type": "virtualbox-iso",
+      "type": "amazon-ebs",
+      "ami_name": "LM3_Windows_2016_Full_Base_{{timestamp}}",
+      "instance_type": "t2.medium",
+      "region": "",
+      "secret_key": "",
+      "access_key": "",
+      "ami_description": "LM3 Base AMI with Security Software",
+      "security_group_id": "sg-98e509d1",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "Windows_Server-2016-English-Full-Base-????.??.??",
+          "root-device-type": "ebs"
+        },
+       "owners": ["801119661308"],
+       "most_recent": true
+      },
       "communicator": "winrm",
-      "iso_url": "{{user `iso_url`}}",
-      "iso_checksum_type": "{{user `iso_checksum_type`}}",
-      "iso_checksum": "{{user `iso_checksum`}}",
-      "headless": true,
-      "boot_wait": "7m",
-      "winrm_username": "{{user `vagrant_user`}}",
-      "winrm_password": "{{user `vagrant_password`}}",
-      "winrm_timeout": "6h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
-      "shutdown_timeout": "1h",
-      "guest_os_type": "Windows2012_64",
-      "guest_additions_mode": "disable",
-      "output_directory": "packer-win2016gui-virtualbox",
-      "disk_size": 61440,
-      "format": "ova",
-      "floppy_files": [
-                "http/win/2016/Autounattend.xml",
-                "scripts/win/disable-winrm.ps1",
-                "scripts/win/enable-winrm.ps1",
-                "scripts/win/microsoft-updates.bat",
-                "scripts/win/win-updates.ps1"
-            ],
-      "vboxmanage": [
-                      ["modifyvm", "{{.Name}}", "--natpf1", "guest_winrm,tcp,,55985,,5985"  ],
-                      ["modifyvm", "{{.Name}}", "--vram", "36" ],
-                      ["modifyvm", "{{.Name}}", "--memory", "2048"],
-                      ["modifyvm", "{{.Name}}", "--cpus", "2"],
-                      ["modifyvm","{{.Name}}","--vrdeaddress", "0.0.0.0" ],
-                      ["modifyvm", "{{.Name}}", "--hardwareuuid", "02f110e7-369a-4bbc-bbe6-6f0b6864ccb6"  ]
-                    ]
-        }
+      "tags": {
+          "LM3_Server_Type": "Full",
+          "LM3_OS_Version": "2016",
+          "LM3_OS_Name": "Windows 2016"
+      },
+      "user_data_file": "./ec2-userdata.ps1",
+      "windows_password_timeout": "30m",
+      "winrm_username": "{{user `admin_user`}}",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true
+    }
     ],
     "provisioners": [
     {
@@ -69,13 +59,8 @@
                             "VAGRANT_USER={{user `vagrant_user`}}"
                           ],
       "scripts": [ "scripts/win/chocolatey.ps1"
-                 ]
-    },
-    {
-      "type": "puppet-masterless",
-      "manifest_file": "puppet/manifests/site.pp",
-      "module_paths": ["puppet/modules"],
-      "guest_os_type": "windows"
+                 ],
+      "valid_exit_codes": [0,1]
     },
     {
       "type": "windows-shell",
@@ -84,30 +69,8 @@
                           ],
       "scripts": [
         "scripts/win/uac-enable.bat",
-        "scripts/win/enable-rdp.bat",
-        "scripts/win/compile-dotnet-assemblies.bat"
+        "scripts/win/enable-rdp.bat"
       ]
     }
-    ],
-   "post-processors" : [
-     {
-       "type": "vagrant",
-       "keep_input_artifact": true,
-       "output": "windows_2016_{{.Provider}}.box"
-     },
-     {
-       "type": "amazon-import",
-       "only": ["virtualbox-iso"],
-       "access_key": "",
-       "secret_key": "",
-       "region": "",
-       "s3_bucket_name": "{{user `aws_s3_bucket_name`}}",
-       "keep_input_artifact": false,
-       "license_type": "BYOL",
-       "tags": 
-        {
-         "Description": "packer amazon-import {{timestamp}}"
-        }
-      }
     ]
 }
