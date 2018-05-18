@@ -9,14 +9,23 @@
       "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}"
     },
     "builders": [ {
-      "type": "amazon-ebs",
-      "ami_name": "LM3_Windows_2016_Full_Base_{{timestamp}}",
+      "type": "amazon-ebsvolume",
       "instance_type": "t2.medium",
       "region": "",
       "secret_key": "",
       "access_key": "",
-      "ami_description": "LM3 Base AMI with Security Software",
       "security_group_id": "sg-98e509d1",
+      "ebs_volumes": [
+        {
+          "device_name": "/dev/sdb",
+          "delete_on_termination": false,
+          "volume_size": 10,
+          "volume_type": "gp2",
+          "tags": {
+              "NRECA_EBS_Type" : "Security Software"
+          }
+        }
+      ],
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
@@ -27,14 +36,6 @@
        "most_recent": true
       },
       "communicator": "winrm",
-      "ami_block_device_mappings": [{
-        "delete_on_termination":  true,
-      }],
-      "tags": {
-          "LM3_Server_Type": "Full",
-          "LM3_OS_Version": "2016",
-          "LM3_OS_Name": "Windows 2016"
-      },
       "user_data_file": "./ec2-userdata.ps1",
       "windows_password_timeout": "30m",
       "winrm_username": "{{user `admin_user`}}",

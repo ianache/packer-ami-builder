@@ -93,6 +93,8 @@
        "access_key": "",
        "secret_key": "",
        "region": "",
+       "ami_name": "lm3_centos_7_x86_64_puppet",
+       "ami_description": "Centos7 Base AMI with Puppet",
        "s3_bucket_name": "{{user `aws_s3_bucket_name`}}",
        "keep_input_artifact": false,
        "license_type": "BYOL",
