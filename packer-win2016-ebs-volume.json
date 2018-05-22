@@ -1,12 +1,7 @@
 {
     "variables": {
       "admin_user": "Administrator",
-      "puppet_release": "enterprise",
-      "pe_version": "2016.4.8",
-      "pe_arch": "x64",
-      "security_group_id": "{{env `AWS_SG_ID`}}",
-      "pe_agent_version": "1.10.8",
-      "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}"
+      "security_group_id": "{{env `AWS_SG_ID`}}"
     },
     "builders": [ {
       "type": "amazon-ebsvolume",
@@ -45,36 +40,16 @@
     ],
     "provisioners": [
     {
-      "type": "windows-shell",
-      "environment_vars": [ "PUPPET_RELEASE={{user `puppet_release`}}",
-                             "PE_VERSION={{user `pe_version`}}",
-                             "PE_AGENT_VERSION={{user `pe_agent_version`}}",
-                             "PE_ARCH={{user `pe_arch`}}"
-                           ],
-      "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
-      "scripts": [
-        "scripts/win/puppet.bat"
-
-      ]
-    },
-    {
       "type": "powershell",
-      "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
-                            "VAGRANT_USER={{user `vagrant_user`}}"
-                          ],
-      "scripts": [ "scripts/win/chocolatey.ps1"
+      "scripts": [ "scripts/win/initialize-new-partition.ps1"
                  ],
       "valid_exit_codes": [0,1]
     },
     {
-      "type": "windows-shell",
-      "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
-                            "VAGRANT_USER={{user `vagrant_user`}}"
-                          ],
-      "scripts": [
-        "scripts/win/uac-enable.bat",
-        "scripts/win/enable-rdp.bat"
-      ]
+      "type": "powershell",
+      "scripts": [ "scripts/win/download-packages.ps1"
+                 ],
+      "valid_exit_codes": [0,1]
     }
     ]
 }
