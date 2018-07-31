@@ -2,15 +2,10 @@
 
 case $::osfamily{
 
-  windows: {
-
-    class { 'windows_cis::rules':
-      ensure => 'present',
-      list   => 'all',
-    }
+  redhat: {
+    include 'cis_benchmarks'
   }
 
-  redhat: {}
+  default: { ("${osfamily} is not supported") }
 
-  default: {("operating system ${::osfamily} not supported")}
 }

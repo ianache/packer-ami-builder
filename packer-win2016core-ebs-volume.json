@@ -1,0 +1,55 @@
+{
+    "variables": {
+      "admin_user": "Administrator",
+      "security_group_id": "{{env `AWS_SG_ID`}}"
+    },
+    "builders": [ {
+      "type": "amazon-ebsvolume",
+      "instance_type": "t2.small",
+      "region": "",
+      "secret_key": "",
+      "access_key": "",
+      "security_group_id": "{{user `security_group_id`}}",
+      "ebs_volumes": [
+        {
+          "device_name": "/dev/sdb",
+          "delete_on_termination": false,
+          "volume_size": 10,
+          "volume_type": "gp2",
+          "tags": {
+              "NRECA_EBS_Type" : "Security Software"
+          }
+        }
+      ],
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "Windows_Server-2016-English-Core-Base-????.??.??",
+          "root-device-type": "ebs"
+        },
+       "owners": ["801119661308"],
+       "most_recent": true
+      },
+      "communicator": "winrm",
+      "user_data_file": "./ec2-userdata.ps1",
+      "windows_password_timeout": "30m",
+      "winrm_username": "{{user `admin_user`}}",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true
+    }
+    ],
+    "provisioners": [
+    {
+      "type": "powershell",
+      "scripts": [ "scripts/win/initialize-new-partition.ps1"
+                 ],
+      "valid_exit_codes": [0,1]
+    },
+    {
+      "type": "powershell",
+      "scripts": [ "scripts/win/download-packages.ps1"
+                 ],
+      "valid_exit_codes": [0,1]
+    }
+    ]
+}

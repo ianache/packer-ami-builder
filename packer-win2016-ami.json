@@ -11,12 +11,21 @@
     "builders": [ {
       "type": "amazon-ebs",
       "ami_name": "LM3_Windows_2016_Full_Base_{{timestamp}}",
-      "instance_type": "t2.medium",
+      "instance_type": "t2.micro",
       "region": "",
       "secret_key": "",
       "access_key": "",
       "ami_description": "LM3 Base AMI with Security Software",
-      "security_group_id": "sg-98e509d1",
+      "security_group_id": "{{user `security_group_id`}}",
+      "launch_block_device_mappings":[
+          {
+            "device_name": "/dev/sdb",
+            "volume_size": 10,
+            "volume_type": "gp2",
+            "delete_on_termination": false,
+            "snapshot_id": "snap-06cfa73cff5003e91"
+          }
+      ],
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
@@ -27,9 +36,6 @@
        "most_recent": true
       },
       "communicator": "winrm",
-      "ami_block_device_mappings": [{
-        "delete_on_termination":  true,
-      }],
       "tags": {
           "LM3_Server_Type": "Full",
           "LM3_OS_Version": "2016",
@@ -58,6 +64,12 @@
     },
     {
       "type": "powershell",
+      "scripts": [ "scripts/win/initialize-new-partition.ps1"
+                 ],
+      "valid_exit_codes": [0,1]
+    },
+    {
+      "type": "powershell",
       "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
                             "VAGRANT_USER={{user `vagrant_user`}}"
                           ],
@@ -72,6 +84,7 @@
                           ],
       "scripts": [
         "scripts/win/uac-enable.bat",
+        "scripts/win/7zip.bat",
         "scripts/win/enable-rdp.bat"
       ]
     }
