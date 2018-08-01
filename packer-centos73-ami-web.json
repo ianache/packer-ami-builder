@@ -1,0 +1,43 @@
+{
+   "variables": {
+        "ssh_username": "centos",
+        "ssh_pass": "vagrant",
+        "puppet_version": "3.5.1"
+    },
+   "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/centos/base/puppet.sh",
+      "environment_vars": [ "PUPPET_VERSION={{user `puppet_version`}}" ]
+    },
+    {
+      "type": "puppet-masterless",
+      "manifest_file": "puppet/manifests/site.pp",
+      "guest_os_type": "unix",
+      "module_paths": "puppet/modules"
+     }
+   ],
+  "builders": [
+   {
+    "type": "amazon-ebs",
+    "ami_name": "lm3_centos_7_web_x86_64",
+    "ssh_username": "{{user `ssh_username`}}",
+    "ssh_port": 22,
+    "instance_type": "t2.micro",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "lm3_centos_7_x86_64_puppet_????-??-??",
+        "root-device-type": "ebs"
+        },
+        "owners": ["184383867286"],
+        "most_recent": true
+    },
+    "communicator": "ssh",
+    "tags": {
+      "LM3_Server_Type": "Minimal",
+      "LM3_OS_Version": "7",
+      "LM3_OS_Name": "CentOS"
+      }
+    }]
+}

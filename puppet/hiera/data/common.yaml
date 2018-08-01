@@ -13,17 +13,18 @@ cis_benchmarks::v_2_1_1::exec_controls:
   'rule_1_1_1_6': true
   'rule_1_1_1_7': true
   'rule_1_1_1_8': true
-  'rule_1_1_14': false
-  'rule_1_1_17': false
-  'rule_1_1_18': false
-  'rule_1_2_1': false
-  'rule_1_2_2': false
+  'rule_1_1_13': true
+  'rule_1_1_15': true
+  'rule_1_1_18': true
+  'rule_1_1_21': true
+  'rule_1_1_22': true
+  'rule_1_2_2': true
   'rule_1_2_3': false
   'rule_1_2_4': false
-  'rule_1_2_5': false
-  'rule_1_2_6': false #large processing time
-  'rule_1_3_1': false
-  'rule_1_3_2': false
+  'rule_1_2_5': true
+  'rule_1_3_1': true
+  'rule_1_3_2': true
+
   'rule_1_4_1': false
   'rule_1_4_2': false
   'rule_1_4_4': false

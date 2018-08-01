@@ -59,13 +59,25 @@
                   "systemctl enable cloud-config.service",
                   "systemctl enable cloud-final.service",
                   "systemctl enable cloud-init-local.service",
-                  "systemctl enable cloud-init.service",
-                  "echo \"{{user `ssh_username`}}:$(openssl rand -base64 32)\" | chpasswd",
+                  "systemctl enable cloud-init.service"
+       ]
+   },
+   {
+    "type": "shell-local",
+    "command": "bash test/centos/cis/run.sh"
+   },
+   {
+        "type": "shell",
+        "execute_command": "sudo -S sh '{{.Path}}'",
+        "remote_folder": "/opt/packer-temp",
+        "inline": [
+                 "echo \"{{user `ssh_username`}}:$(openssl rand -base64 32)\" | chpasswd",
                   "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
                   "shred -u /root/.*history  /home/centos/.*history",
                   "dd if=/dev/zero of=/zeros bs=1M",
                   "rm -f /zeros"
         ]
+ 
    }
    ],
   "builders": [
@@ -81,6 +93,8 @@
     "ssh_username": "{{user `ssh_username`}}",
     "ssh_password": "{{user `ssh_pass`}}",
     "ssh_wait_timeout": "90m",
+    "ssh_host_port_min": 2222,
+    "ssh_host_port_max": 2222,
     "http_directory" : "http",
     "output_directory": "packer-centos73-x86_64-virtualbox",
     "ssh_port": 22,
