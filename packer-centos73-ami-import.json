@@ -1,7 +1,7 @@
 {
    "variables": {
         "puppet_version": "latest",
-        "ssh_username": "root",
+        "ssh_username": "vagrant",
         "ssh_pass": "vagrant",
         "iso_url_prefix": "iso",
         "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
@@ -26,35 +26,35 @@
        }
    },
    {
-        "type": "file",
-        "source": "files/10-growpart.cfg",
-        "destination": "/tmp/10-growpart.cfg"
+    "type": "file",
+    "source": "files/10-growpart.cfg",
+    "destination": "/opt/tmp/10-growpart.cfg"
    },
    {
      "type": "shell",
-     "inline": "mkdir -p /opt/packer-puppet-masterless/data",
-     "remote_folder": "/opt/packer-temp"
+     "inline": "mkdir -p /opt/tmp/packer-puppet-masterless/data",
+     "remote_folder": "/opt/tmp"
    },
    {
      "type": "file",
      "source": "puppet/hiera/data/",
-     "destination": "/opt/packer-puppet-masterless/data"
+     "destination": "/opt/tmp/packer-puppet-masterless/data"
    },
    {
      "type": "puppet-masterless",
      "puppet_bin_dir": "/opt/puppetlabs/bin",
      "manifest_file": "puppet/manifests/site.pp",
      "module_paths": "puppet/modules",
-     "staging_directory": "/opt/packer-puppet-masterless",
+     "staging_directory": "/opt/tmp/packer-puppet-masterless",
      "hiera_config_path": "puppet/hiera/lin/hiera.yaml"
    },
    {
         "type": "shell",
         "execute_command": "sudo -S sh '{{.Path}}'",
-        "remote_folder": "/opt/packer-temp",
+        "remote_folder": "/opt/tmp",
         "inline": [
                   "yum -y install cloud-init cloud-utils cloud-utils-growpart",
-                  "mv /tmp/10-growpart.cfg /etc/cloud/cloud.cfg.d/10-growpart.cfg",
+                  "mv /opt/tmp/10-growpart.cfg /etc/cloud/cloud.cfg.d/10-growpart.cfg",
                   "chown root:root /etc/cloud/cloud.cfg.d/10-growpart.cfg",
                   "systemctl enable cloud-config.service",
                   "systemctl enable cloud-final.service",
@@ -69,11 +69,10 @@
    {
         "type": "shell",
         "execute_command": "sudo -S sh '{{.Path}}'",
-        "remote_folder": "/opt/packer-temp",
+        "remote_folder": "/opt/tmp",
         "inline": [
-                 "echo \"{{user `ssh_username`}}:$(openssl rand -base64 32)\" | chpasswd",
                   "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
-                  "shred -u /root/.*history  /home/centos/.*history",
+                  "shred -u /root/.*history  /home/vagrant/.*history",
                   "dd if=/dev/zero of=/zeros bs=1M",
                   "rm -f /zeros"
         ]
@@ -136,5 +135,5 @@
           "Description": "packer amazon-import {{timestamp}}"
         }
      }
-     ]
+    ]
 }

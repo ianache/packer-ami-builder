@@ -4,7 +4,7 @@ cis_benchmarks::cis_version: 'v_2_1_1'
 # Setup execute control hash
 # If you do not want a rule to be enforced, simply turn them to 'false' here
 cis_benchmarks::v_2_1_1::exec_controls:
-  'prereq': false #applied by cis_profile with override if needed
+  'rule_1_1_1_prereq': true #applied by cis_profile with override if needed
   'rule_1_1_1_1': true
   'rule_1_1_1_2': true
   'rule_1_1_1_3': true
@@ -19,76 +19,107 @@ cis_benchmarks::v_2_1_1::exec_controls:
   'rule_1_1_21': true
   'rule_1_1_22': true
   'rule_1_2_2': true
-  'rule_1_2_3': false
-  'rule_1_2_4': false
+  'rule_1_2_3': false #Not Scored
+  'rule_1_2_4': false #Not Scored
   'rule_1_2_5': true
   'rule_1_3_1': true
   'rule_1_3_2': true
-
-  'rule_1_4_1': false
-  'rule_1_4_2': false
-  'rule_1_4_4': false
-  'rule_1_4_6': false
-  'rule_1_5_1': false #applied by cis_profile with override if needed
-  'rule_1_6_1': false
-  'rule_2_1_1': false
-  'rule_3_1': false
-  'rule_3_2': false
-  'rule_3_3': false
-  'rule_3_6': false
-  'rule_3_8': false #applied by cis_profile with override if needed
-  'rule_3_7n9n10n11n12n13n14n15': false
-  'rule_3_16': false
-  'rule_4_0': false
-  'rule_4_1_1': false
-  'rule_4_2_1': false
-  'rule_4_4_1': false
-  'rule_4_5_1': false
-  'rule_4_5_2': false
-  'rule_4_5_4': false
-  'rule_4_6_1': false
-  'rule_4_7': false
-  'rule_5_1_1': false #applied by cis_profile with override if needed
-  'rule_5_2_1_1': false
-  'rule_5_2_3': false
-  'rule_5_2_4': false
-  'rule_5_3': false #applied by cis_profile with override if needed
-  'rule_6_1_1': false
-  'rule_6_2_1': false
-  'rule_6_3_1': false
-  'rule_6_3_2': false
-  'rule_6_3_3': false
-  'rule_6_3_4': false
-  'rule_6_5': false
-  'rule_7_1_1': false
-  'rule_7_2': false
-  'rule_7_3': false
-  'rule_7_4': false
-  'rule_7_5': false
-  'rule_8_1': false #applied by cis_profile with override if needed
-  'rule_9_2_1': false
-  'rule_9_1_2': false
-  'rule_9_1_10': false
-  'rule_9_1_11': false
-  'rule_9_1_12': false
-  'rule_9_1_13': false
-  'rule_9_1_14': false
-  'rule_9_2_2': false
-  'rule_9_2_5': false
-  'rule_9_2_11': false
-  'rule_9_2_12': false
-  'rule_9_2_13': false
-  'rule_9_2_14': false
-  'rule_9_2_15': false
-  'rule_9_2_16': false
-  'rule_9_2_17': false
-  'rule_9_2_18': false
-  'rule_9_2_19': false
-  'rule_9_2_20': false
-  'rule_specialperms': false
+  'rule_1_4_1': true
+  'rule_1_4_2': true
+  'rule_1_4_3': false #Not Scored
+  'rule_1_5_1': true
+  'rule_1_5_2': true #Not Scored but can impact 32-bit systems.
+  'rule_1_5_3': true
+  'rule_1_5_4': true
+  'rule_1_6_1': false #SELINUX
+  'rule_1_6_2': true
+  'rule_1_7_1': true #Banner
+  'rule_1_7_2': true
+  'rule_1_8': true
+  'rule_2_1': true
+  'rule_2_2_1': true #ntp configuration(PENDING)
+  'rule_2_2_2': true
+  'rule_2_2_3': true
+  'rule_2_2_4': true
+  'rule_2_2_5': true
+  'rule_2_2_6': true
+  'rule_2_2_7': true
+  'rule_2_2_8': true
+  'rule_2_2_9': true #ftp
+  'rule_2_2_10': true #http
+  'rule_2_2_11': true #imap and pop3
+  'rule_2_2_12': true
+  'rule_2_2_13': true
+  'rule_2_2_14': true
+  'rule_2_2_15': true
+  'rule_2_2_16': true
+  'rule_2_2_17': true
+  'rule_2_2_18': true
+  'rule_2_2_19': true
+  'rule_2_2_20': true
+  'rule_2_2_21': true
+  'rule_2_3_1': true #remove unused clients
+  'rule_3_1_1': true
+  'rule_3_1_2': true
+  'rule_3_2_1': true
+  'rule_3_2_2': true
+  'rule_3_2_3': true
+  'rule_3_2_4': true
+  'rule_3_2_5': true
+  'rule_3_2_6': true
+  'rule_3_2_7': true
+  'rule_3_2_8': true
+  'rule_3_3_1': true
+  'rule_3_3_2': true
+  'rule_3_3_3': true
+  'rule_3_4_1': true
+  'rule_3_4_2': true
+  'rule_3_5': true
+  'rule_3_6': true
+  'rule_3_7': false
+  'rule_4_1': true
+  'rule_4_1_3': true
+  'rule_4_1_4': true
+  'rule_4_1_12': false #partitions audit
+  'rule_4_1_13': true
+  'rule_4_2_1': true
+  'rule_4_2_2': false
+  'rule_4_2_3': true
+  'rule_4_3': true
+  'rule_5_1': true
+  'rule_5_2': true #ssh configuration
+  'rule_5_3': true
+  'rule_5_4_1': true
+  'rule_5_4_2': true
+  'rule_5_4_3': true
+  'rule_5_4_4': true
+  'rule_5_5': true
+  'rule_5_6': true
+  'rule_6_1_1': true
+  'rule_6_1_2': true
+  'rule_6_1_10': true
+  'rule_6_1_11': true
+  'rule_6_1_12': true
+  'rule_6_1_13': true
+  'rule_6_1_14': true
+  'rule_6_2_1': true
+  'rule_6_2_2': true
+  'rule_6_2_5': true
+  'rule_6_2_6': true
+  'rule_6_2_7': true
+  'rule_6_2_8': true
+  'rule_6_2_10': true
+  'rule_6_2_11': true
+  'rule_6_2_12': true
+  'rule_6_2_14': true
+  'rule_6_2_15': true
+  'rule_6_2_16': true
+  'rule_6_2_17': true
+  'rule_6_2_18': true
+  'rule_6_2_19': true
 
 # Pre-req.
-cis_benchmarks::v_2_1_1::cis_scripts_dir: '/tmp/cis_scripts'
+cis_benchmarks::v_2_1_1::cis_scripts_dir: '/opt/tmp/cis_scripts'
 cis_benchmarks::v_2_1_1::cis_scripts:
   - 'cis_ww_files.sh'
   - 'cis_ww_dirs.sh'
@@ -155,8 +186,8 @@ cis_benchmarks::v_2_1_1::cis_inetd_services:
   'tftp-server': '(2.1.6) - disable tftp-server'
   'xinetd': '(2.1.7) - disable xinetd'
 # 2.2.1
-'cis_benchmarks::v_2_1_1::time_service': 'ntp'
-'cis_benchmarks::v_2_1_1::time_server': ''
+'cis_benchmarks::v_2_1_1::time_service': 'chrony'
+'cis_benchmarks::v_2_1_1::time_server': '169.254.169.123 prefer iburst'
 # Rule 2.3.1
 cis_benchmarks::v_2_1_1::cis_remove_package:
   'ypbind': '(2.3.1) - Ensure NIS Client is not installed (Scored)'
@@ -196,23 +227,23 @@ cis_benchmarks::v_2_1_1::rsyslogcontent:
   'daemon.*': '/var/log/daemon.log'
   'syslog.*': '/var/log/syslog'
   'lpr,news,uucp,local0,local1,local2,local3,local4,local5,local6.*': '/var/log/unused.log'
-  #5.2 ssh config
-  cis_benchmarks::v_2_1_1::cis_ssh_settings:
-    '(5.2.2) - Ensure SSH Protocol is set to 2 (Scored)': 'Protocol 2'
-    '5.2.3 Ensure SSH LogLevel is set to INFO (Scored)': 'LogLevel INFO'
-    '5.2.4 Ensure SSH X11 forwarding is disabled (Scored)': 'X11Forwarding no'
-    '5.2.5 Ensure SSH MaxAuthTries is set to 4 or less (Scored)': 'MaxAuthTries 4'
-    '5.2.6 Ensure SSH IgnoreRhosts is enabled (Scored)': 'IgnoreRhosts yes'
-    '5.2.7 Ensure SSH HostbasedAuthentication is disabled (Scored)': 'HostbasedAuthentication no'
-    '5.2.8 Ensure SSH root login is disabled (Scored)': 'PermitRootLogin no'
-    '5.2.9 Ensure SSH PermitEmptyPasswords is disabled (Scored)': 'PermitEmptyPasswords no'
-    '5.2.10 Ensure SSH PermitUserEnvironment is disabled (Scored)': 'PermitUserEnvironment no'
-    '5.2.11 Ensure only approved ciphers are used (Scored)': 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr'
-    '5.2.12 Ensure only approved MAC algorithms are used (Scored)': 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128- etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
-    '5.2.13 Ensure SSH Idle Timeout Interval is configured (Scored), interval': 'ClientAliveInterval 300'
-    '5.2.13 Ensure SSH Idle Timeout Interval is configured (Scored), countmax': 'ClientAliveCountMax 4'
-    '5.2.14 Ensure SSH LoginGraceTime is set to one minute or less (Scored)': 'LoginGraceTime 60'
-    '5.2.16 Ensure SSH warning banner is configured (Scored)': 'Banner /etc/issue.net'
+#5.2 ssh config
+cis_benchmarks::v_2_1_1::cis_sshd_settings:
+  '(5.2.2) - Ensure SSH Protocol is set to 2 (Scored)': 'Protocol 3'
+  '5.2.3 Ensure SSH LogLevel is set to INFO (Scored)': 'LogLevel INFO'
+  '5.2.4 Ensure SSH X11 forwarding is disabled (Scored)': 'X11Forwarding no'
+  '5.2.5 Ensure SSH MaxAuthTries is set to 4 or less (Scored)': 'MaxAuthTries 4'
+  '5.2.6 Ensure SSH IgnoreRhosts is enabled (Scored)': 'IgnoreRhosts yes'
+  '5.2.7 Ensure SSH HostbasedAuthentication is disabled (Scored)': 'HostbasedAuthentication no'
+  '5.2.8 Ensure SSH root login is disabled (Scored)': 'PermitRootLogin no'
+  '5.2.9 Ensure SSH PermitEmptyPasswords is disabled (Scored)': 'PermitEmptyPasswords no'
+  '5.2.10 Ensure SSH PermitUserEnvironment is disabled (Scored)': 'PermitUserEnvironment no'
+  '5.2.11 Ensure only approved ciphers are used (Scored)': 'Ciphers aes256-ctr,aes192-ctr,aes128-ctr'
+  '5.2.12 Ensure only approved MAC algorithms are used (Scored)': 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+  '5.2.13 Ensure SSH Idle Timeout Interval is configured (Scored), interval': 'ClientAliveInterval 300'
+  '5.2.13 Ensure SSH Idle Timeout Interval is configured (Scored), countmax': 'ClientAliveCountMax 4'
+  '5.2.14 Ensure SSH LoginGraceTime is set to one minute or less (Scored)': 'LoginGraceTime 60'
+  '5.2.16 Ensure SSH warning banner is configured (Scored)': 'Banner /etc/issue.net'
 
 # 5.3 - Configure logrotate (Not Scored)
 cis_benchmarks::v_2_1_1::logs:

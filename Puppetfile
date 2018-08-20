@@ -21,9 +21,9 @@ mod 'puppetlabs-apache',
   :git => 'git@github.com:puppetlabs/puppetlabs-apache.git',
   :tag => '3.0.0'
 
-mod 'abuxton-cis_benchmarks',
-  :git => 'git@github.com:abuxton/cis_benchmarks.git',
-  :tag => 'v0.1.14'
+mod 'lm3corp-cis_benchmarks',
+  :git => 'git@github.com:LM3CORP/cis_benchmarks.git',
+  :ref => 'master'
 
 mod 'herculesteam-augeasproviders_core',
   :git => 'git@github.com:hercules-team/augeasproviders_core.git',
