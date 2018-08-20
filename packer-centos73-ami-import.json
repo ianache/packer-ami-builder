@@ -1,8 +1,8 @@
 {
    "variables": {
         "puppet_version": "latest",
-        "ssh_username": "vagrant",
-        "ssh_pass": "vagrant",
+        "ssh_username": "centos",
+        "ssh_pass": "centos",
         "iso_url_prefix": "iso",
         "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
         "vm_version": "1.0",
@@ -71,12 +71,13 @@
         "execute_command": "sudo -S sh '{{.Path}}'",
         "remote_folder": "/opt/tmp",
         "inline": [
+                  "echo \"{{user `ssh_username`}}:$(openssl rand -base64 32)\" | chpasswd",
                   "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
-                  "shred -u /root/.*history  /home/vagrant/.*history",
+                  "shred -u /root/.*history  /home/centos/.*history",
                   "dd if=/dev/zero of=/zeros bs=1M",
+                  "rm -rf /opt/tmp/*",
                   "rm -f /zeros"
         ]
- 
    }
    ],
   "builders": [
@@ -87,7 +88,6 @@
     "guest_os_type": "RedHat_64",
     "iso_url": "{{user `iso_url_prefix`}}/CentOS-7-x86_64-Minimal-1708.iso",
     "iso_checksum": "5848f2fd31c7acf3811ad88eaca6f4aa",
-    "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
     "iso_checksum_type": "md5",
     "ssh_username": "{{user `ssh_username`}}",
     "ssh_password": "{{user `ssh_pass`}}",
@@ -109,18 +109,13 @@
     ],
     "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
     "vboxmanage": [
-    ["modifyvm","{{.Name}}","--memory","2048"],
+    ["modifyvm","{{.Name}}","--memory","8096"],
     ["modifyvm","{{.Name}}","--cpus", "2"],
-    ["modifyvm","{{.Name}}","--vrdeaddress", "0.0.0.0" ]
+    ["modifyvm","{{.Name}}","--vrdeaddress", "127.0.0.1" ]
     ]
     }],
     "post-processors" : [
-     {
-       "type": "vagrant",
-       "keep_input_artifact": true,
-       "output": "centos_73_{{.Provider}}.box"
-     },
-     {
+    {
        "type": "amazon-import",
        "access_key": "",
        "secret_key": "",
@@ -130,10 +125,9 @@
        "s3_bucket_name": "{{user `aws_s3_bucket_name`}}",
        "keep_input_artifact": false,
        "license_type": "BYOL",
-       "tags":
-        {
-          "Description": "packer amazon-import {{timestamp}}"
-        }
+       "tags": {
+         "Description": "packer amazon-import {{timestamp}}"
+       }
      }
     ]
 }
