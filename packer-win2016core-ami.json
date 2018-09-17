@@ -6,12 +6,15 @@
       "pe_arch": "x64",
       "security_group_id": "{{env `AWS_SG_ID`}}",
       "pe_agent_version": "1.10.8",
-      "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}"
+      "chocolatey_install_url": "{{env `CHOCO_INSTALL_URL`}}",
+      "docker_images": "microsoft/windowsservercore",
+      "docker_provider": "ee",
+      "docker_version": "18-03-1-ee-3"
     },
     "builders": [ {
       "type": "amazon-ebs",
-      "ami_name": "LM3_Windows_2016_Full_Base_{{timestamp}}",
-      "instance_type": "t2.micro",
+      "ami_name": "LM3_Windows_2016_Core_Base_Docker_2018_09_16",
+      "instance_type": "t2.medium",
       "region": "",
       "secret_key": "",
       "access_key": "",
@@ -20,7 +23,7 @@
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
-          "name": "Windows_Server-2016-English-Full-Base-????.??.??",
+          "name": "Windows_Server-2016-English-Core-Base-????.??.??",
           "root-device-type": "ebs"
         },
        "owners": ["801119661308"],
@@ -28,9 +31,11 @@
       },
       "communicator": "winrm",
       "tags": {
-          "LM3_Server_Type": "Full",
+          "LM3_AMI_Description": "Windows 2016 Core Docker Host",
+          "LM3_Server_Type": "Core",
           "LM3_OS_Version": "2016",
-          "LM3_OS_Name": "Windows 2016"
+          "LM3_OS_Name": "Windows 2016 Core",
+          "LM3_OS_Base_Software": "Docker, Git, Puppet, Chocolatey"
       },
       "user_data_file": "./ec2-userdata.ps1",
       "windows_password_timeout": "30m",
@@ -55,7 +60,8 @@
     },
     {
       "type": "powershell",
-      "scripts": [ "scripts/win/initialize-new-partition.ps1"
+      "scripts": [
+                   "scripts/win/docker/install-containers-feature.ps1"
                  ],
       "valid_exit_codes": [0,1]
     },
@@ -69,15 +75,49 @@
       "valid_exit_codes": [0,1]
     },
     {
+      "type": "windows-restart",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
+    },
+    {
+       "type": "powershell",
+       "environment_vars": [
+         "docker_images={{user `docker_images`}}",
+         "docker_provider={{user `docker_provider`}}",
+         "docker_version={{user `docker_version`}}"
+        ],
+        "scripts": [
+         "./scripts/win/docker/add-docker-group.ps1",
+         "./scripts/win/docker/install-docker.ps1",
+         "./scripts/win/docker/docker-pull.ps1",
+         "./scripts/win/wait-for-tiworker.ps1",
+         "./scripts/win/docker/open-docker-insecure-port.ps1",
+         "./scripts/win/docker/open-docker-swarm-ports.ps1",
+         "./scripts/win/docker/remove-docker-key-json.ps1",
+         "./scripts/win/docker/disable-windows-defender.ps1"
+        ]
+    },
+    {
+      "type": "windows-shell",
+      "inline": ["choco install git -y"]
+    },
+    {
       "type": "windows-shell",
       "environment_vars": [ "CHOCO_INSTALL_URL={{user `chocolatey_install_url`}}",
                             "VAGRANT_USER={{user `vagrant_user`}}"
                           ],
       "scripts": [
         "scripts/win/uac-enable.bat",
-        "scripts/win/7zip.bat",
         "scripts/win/enable-rdp.bat"
       ]
+    },
+    {
+     "type": "powershell",
+     "inline": [
+            "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/InitializeInstance.ps1 -Schedule",
+            "C:/ProgramData/Amazon/EC2-Windows/Launch/Scripts/SysprepInstance.ps1 -NoShutdown"
+              ]
     }
+
+
     ]
 }
