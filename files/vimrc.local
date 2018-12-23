@@ -1,0 +1,18 @@
+let g:go_version_warning = 0
+set nocompatible
+colorscheme ir_black
+set cursorline
+hi CursorLine term=bold cterm=bold guibg=Black
+"set term=xterm-256color
+set clipboard=unnamed
+set nohlsearch
+set nowrap
+set tabstop=4
+set autoindent
+set number
+set showmatch
+set nospell
+set nobackup
+set nowritebackup
+set noswapfile
+set noautoindent

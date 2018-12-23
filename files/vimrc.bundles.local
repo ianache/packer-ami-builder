@@ -1,0 +1,8 @@
+Bundle 'rodjek/vim-puppet'
+Bundle 'christoomey/vim-tmux-navigator'
+Bundle 'rhysd/vim-gfm-syntax'
+Bundle 'hashivim/vim-hashicorp-tools'
+Bundle 'm-kat/aws-vim'
+Bundle 'fatih/vim-go'
+Bundle 'roxma/vim-tmux-clipboard'
+Bundle 'tmux-plugins/vim-tmux-focus-events'

@@ -6,47 +6,9 @@
         "iso_url_prefix": "iso",
         "aws_s3_bucket_name": "{{env `AWS_S3_BUCKET`}}",
         "vm_version": "1.0",
-        "vm_description": "Built with Packer VirtualBox-Iso"
-    },
-   "provisioners": [
-   {
-      "type": "shell",
-      "environment_vars": [ "PUPPET_VERSION={{user `puppet_version`}}" ],
-      "execute_command": "echo '{{user `ssh_pass`}}' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
-      "override": {
-        "virtualbox-iso": {
-          "scripts": [
-            "scripts/centos/base/base.sh",
-            "scripts/centos/base/sshd.sh",
-            "scripts/centos/base/fix-slow-dns.sh",
-            "scripts/centos/base/cloud-config.sh",
-            "scripts/centos/desktop/vscode.sh"
-          ]
-        }
-      }
-    },
-    {
-      "type": "file",
-      "source": "files/10-growpart.cfg",
-      "destination": "/opt/tmp/10-growpart.cfg"
-    },
-    {
-      "type": "shell",
-      "execute_command": "sudo -S sh '{{.Path}}'",
-      "remote_folder": "/opt/tmp",
-      "inline": [
-        "echo \"{{user `ssh_username`}}:$(openssl rand -base64 32)\" | chpasswd",
-        "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
-        "shred -u /root/.*history  /home/centos/.*history"
-      ]
-    },
-    {
-      "type": "shell",
-      "execute_command": "sudo -S sh '{{.Path}}'",
-      "remote_folder": "/opt/tmp",
-      "scripts": [ "scripts/centos/base/clean.sh" ]
-   }
-  ],
+        "vm_description": "Built with Packer VirtualBox-Iso",
+        "ui_desktop": "GNOME Desktop"
+  },
   "builders": [
     {
       "type": "virtualbox-iso",
@@ -76,10 +38,54 @@
       ],
       "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
       "vboxmanage": [
-        ["modifyvm","{{.Name}}","--memory","8096"],
+        ["modifyvm","{{.Name}}","--memory","4096"],
         ["modifyvm","{{.Name}}","--cpus", "2"],
         ["modifyvm","{{.Name}}","--vrdeaddress", "127.0.0.1" ]
       ]
     }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "files/10-growpart.cfg",
+      "destination": "/tmp/10-growpart.cfg"
+    },
+    {
+      "type": "file",
+      "source": "files/xorg.conf",
+      "destination": "/etc/X11/xorg.conf"
+    },
+    {
+      "type": "shell",
+      "environment_vars": [ "PUPPET_VERSION={{user `puppet_version`}}" ],
+      "execute_command": "echo '{{user `ssh_pass`}}' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "override": {
+        "virtualbox-iso": {
+          "scripts": [
+            "scripts/centos/base/base.sh",
+            "scripts/centos/base/sshd.sh",
+            "scripts/centos/base/fix-slow-dns.sh",
+            "scripts/centos/base/cloud-config.sh",
+            "scripts/centos/desktop/vscode.sh"
+          ]
+        }
+      }
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -S sh '{{.Path}}'",
+      "remote_folder": "/tmp",
+      "inline": [
+        "echo \"{{user `ssh_username`}}:$(openssl rand -base64 32)\" | chpasswd",
+        "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
+        "shred -u /root/.*history  /home/centos/.*history"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "sudo -S sh '{{.Path}}'",
+      "remote_folder": "/tmp",
+      "scripts": [ "scripts/centos/base/clean.sh" ]
+   }
   ]
 }
